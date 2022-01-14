@@ -45,6 +45,7 @@ func main() {
 	m := flag.Bool("M", false, "sort by month")
 	b := flag.Bool("b", false, "trim spaces")
 	c := flag.Bool("c", false, "check sort")
+	h := flag.Bool("h", false, "by number with suffixes")
 	flag.Parse()
 
 	keys := keys{
@@ -55,8 +56,8 @@ func main() {
 		byMonth:   *m,
 		trimSpace: *b,
 		check:     *c,
+		suffix:    *h,
 	}
-	log.Println(keys)
 
 	fileString, err := getString(fileName)
 	if err != nil {
@@ -71,12 +72,14 @@ func main() {
 }
 
 func sortStrings(file string, keys keys) (string, error) {
+	fileStrings := strings.Split(file, "\n")
+
 	if keys.trimSpace {
 		log.Println("-b")
-		file = strings.TrimSpace(file)
+		for x := 0; x < len(fileStrings); x++ {
+			fileStrings[x] = strings.TrimSpace(file)
+		}
 	}
-
-	fileStrings := strings.Split(file, "\n")
 
 	if keys.check && sort.StringsAreSorted(fileStrings) {
 		fmt.Println("-c file sorted")

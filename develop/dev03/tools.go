@@ -6,29 +6,15 @@ import (
 	"strings"
 )
 
-const (
-	january = iota
-	february 
-	march 
-	april
-	may
-	june
-	july
-	august
-	september
-	october
-	november
-	december
-)
-
 type keys struct {
-	column int
-	byNumber bool
-	reverse bool
-	unique bool
-	byMonth bool
+	column    int
+	byNumber  bool
+	reverse   bool
+	unique    bool
+	byMonth   bool
 	trimSpace bool
-	check bool
+	check     bool
+	suffix    bool
 }
 
 func getString(fileName string) (string, error) {
@@ -55,4 +41,3 @@ func sliceToString(slice []string) string {
 
 	return res.String()
 }
-
