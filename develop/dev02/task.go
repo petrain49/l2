@@ -128,7 +128,7 @@ func switchState(r rune) byte {
 	}
 }
 
-// if previous runes were digits - write last symbol to string.builder <n - 1> times
+// if previous runes were digits - write last symbol to string.builder <n-1> times
 func writeNRunes(builder *strings.Builder, r rune, n *[]rune) {
 	if len(*n) == 0 {
 		return
