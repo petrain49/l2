@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -45,6 +43,16 @@ func main() {
 
 		switch cmd[0] {
 		case "cd":
+			if cmd[1] == ".." {
+				path := pwd()
+				index := strings.LastIndex(path, "/")
+
+				err := os.Chdir(path[:index])
+				if err != nil {
+					log.Println(err)
+				}
+				continue
+			}
 			err := os.Chdir(cmd[1])
 			if err != nil {
 				log.Println(err)
@@ -52,13 +60,9 @@ func main() {
 			}
 
 		case "pwd":
-			path, err := os.Getwd()
-			if err != nil {
-				log.Println(err)
-				continue
-			}
+			path := pwd()
 
-			fmt.Println(path)
+			fmt.Printf("pwd %s\n", path)
 
 		case "echo":
 			if len(cmd) > 1 {
@@ -66,48 +70,23 @@ func main() {
 			}
 
 		case "kill":
-			pid, err := strconv.Atoi(cmd[1])
-			if err != nil {
-				log.Println(err)
-				continue
-			}
+			pid := kill(cmd[1])
 
-			process, err := os.FindProcess(pid)
-			if err != nil {
-				log.Println(err)
-				continue
-			}
+			fmt.Printf("killed proc %d\n", pid)
 
-			err = process.Kill()
-			if err != nil {
-				log.Println(err)
-				continue
-			}
 		case "ps":
-			matches, err := filepath.Glob("/proc/*/exe")
-			if err != nil {
-				log.Println(err)
-				continue
-			}
+			processes := ps()
+			fmt.Println(processes)
 
-    		for _, file := range matches {
-				target, err := os.Readlink(file)
-				if err != nil {
-					log.Println(err)
-					continue
-				}
-
-				if len(target) > 0 {
-					fmt.Printf("%s\n", filepath.Base(target))
-				}
-    		}
 		case "quit":
 			done = true
+
 		default:
 			command := exec.Command(cmd[0], cmd[1:]...)
 			command.Stdout = os.Stdout
 			command.Stderr = os.Stderr
 			command.Run()
+
 		}
 	}
 }
